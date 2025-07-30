@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from flask import Flask, render_template, request, redirect, url_for, current_app
+from flask import Flask, render_template, request, redirect, url_for, current_app, jsonify
 def _db_path():
     """設定で DB_PATH が指定されていればそのパスを返す。無ければ None。"""
     return current_app.config.get("DB_PATH")
+from flask_cors import CORS
 from . import db as db_mod
 
 app = Flask(__name__)
+CORS(app)
 
 # DB 初期化（アプリコンテキスト内で行い、テスト時はカスタムパスを利用）
 with app.app_context():
@@ -31,6 +33,30 @@ def index():
 def delete(memo_id: int):
     db_mod.delete_memo(memo_id, _db_path())
     return redirect(url_for("index"))
+
+
+@app.route("/api/memos", methods=["GET"])
+
+def api_list():
+    return jsonify(db_mod.get_memos(_db_path()))
+
+
+@app.route("/api/memos", methods=["POST"])
+
+def api_add():
+    data = request.get_json(silent=True) or {}
+    text = (data.get("text") or "").strip()
+    if not text:
+        return {"error": "text required"}, 400
+    memo_id = db_mod.add_memo(text, _db_path())
+    return {"id": memo_id, "text": text}, 201
+
+
+@app.route("/api/memos/<int:memo_id>", methods=["DELETE"])
+
+def api_delete(memo_id: int):
+    db_mod.delete_memo(memo_id, _db_path())
+    return {"ok": True}
 
 
 if __name__ == "__main__":

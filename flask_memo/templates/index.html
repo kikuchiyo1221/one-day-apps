@@ -18,7 +18,9 @@
 </form>
 <ul>
     {% for m in memos %}
-        <li>{{ m }}</li>
+        <li>{{ m.text if m.text else m["text"] }}
+            <a href="{{ url_for('delete', memo_id=m.id if m.id is defined else m['id']) }}">削除</a>
+        </li>
     {% endfor %}
 </ul>
 </body>
