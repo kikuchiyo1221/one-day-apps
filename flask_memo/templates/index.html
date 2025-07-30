@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <title>Flask Memo App</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+        input { width: 70%; padding: 0.4em; }
+        button { padding: 0.4em 1em; }
+        ul { list-style: disc; margin-top: 1em; }
+    </style>
+</head>
+<body>
+<h1>Memo App</h1>
+<form method="post">
+    <input name="memo" placeholder="メモを入力" autofocus />
+    <button type="submit">追加</button>
+</form>
+<ul>
+    {% for m in memos %}
+        <li>{{ m }}</li>
+    {% endfor %}
+</ul>
+</body>
+</html> 
